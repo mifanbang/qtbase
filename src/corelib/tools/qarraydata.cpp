@@ -49,10 +49,6 @@ QT_BEGIN_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_GCC("-Wmissing-field-initializers")
 
-const QArrayData QArrayData::shared_null[2] = {
-    { Q_REFCOUNT_INITIALIZE_STATIC, 0, 0, 0, sizeof(QArrayData) }, // shared null
-    /* zero initialized terminator */};
-
 static const QArrayData qt_array[3] = {
     { Q_REFCOUNT_INITIALIZE_STATIC, 0, 0, 0, sizeof(QArrayData) }, // shared empty
     { { Q_BASIC_ATOMIC_INITIALIZER(0) }, 0, 0, 0, sizeof(QArrayData) }, // unsharable empty
@@ -84,6 +80,15 @@ static QArrayData *reallocateData(QArrayData *header, size_t allocSize, uint opt
     if (header)
         header->capacityReserved = bool(options & QArrayData::CapacityReserved);
     return header;
+}
+
+QArrayData *QArrayData::sharedNull() Q_DECL_NOTHROW
+{
+    static const QArrayData shared_null[2] = {
+        { Q_REFCOUNT_INITIALIZE_STATIC, 0, 0, 0, sizeof(QArrayData) }, // shared null
+        /* zero initialized terminator */
+    };
+    return const_cast<QArrayData*>(shared_null);
 }
 
 QArrayData *QArrayData::allocate(size_t objectSize, size_t alignment,

@@ -119,8 +119,7 @@ struct Q_CORE_EXPORT QArrayData
     static void deallocate(QArrayData *data, size_t objectSize,
             size_t alignment) Q_DECL_NOTHROW;
 
-    static const QArrayData shared_null[2];
-    static QArrayData *sharedNull() Q_DECL_NOTHROW { return const_cast<QArrayData*>(shared_null); }
+    static QArrayData *sharedNull() Q_DECL_NOTHROW;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QArrayData::AllocationOptions)

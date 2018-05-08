@@ -58,7 +58,11 @@ QT_BEGIN_NAMESPACE
     the number of elements in the list.
 */
 
-const QListData::Data QListData::shared_null = { Q_REFCOUNT_INITIALIZE_STATIC, 0, 0, 0, { 0 } };
+const QListData::Data *QListData::sharedNull()
+{
+    static const QListData::Data shared_null = { Q_REFCOUNT_INITIALIZE_STATIC, 0, 0, 0, { 0 } };
+    return &shared_null;
+}
 
 /*!
  *  Detaches the QListData by allocating new memory for a list which will be bigger

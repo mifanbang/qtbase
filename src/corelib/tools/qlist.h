@@ -99,7 +99,7 @@ struct Q_CORE_EXPORT QListData {
     void realloc_grow(int growth);
     inline void dispose() { dispose(d); }
     static void dispose(Data *d);
-    static const Data shared_null;
+    static const Data *sharedNull();
     Data *d;
     void **erase(void **xi);
     void **append(int n);
@@ -148,20 +148,20 @@ private:
     union { QListData p; QListData::Data *d; };
 
 public:
-    inline QList() Q_DECL_NOTHROW : d(const_cast<QListData::Data *>(&QListData::shared_null)) { }
+    inline QList() Q_DECL_NOTHROW : d(const_cast<QListData::Data *>(QListData::sharedNull())) { }
     QList(const QList<T> &l);
     ~QList();
     QList<T> &operator=(const QList<T> &l);
 #ifdef Q_COMPILER_RVALUE_REFS
     inline QList(QList<T> &&other) Q_DECL_NOTHROW
-        : d(other.d) { other.d = const_cast<QListData::Data *>(&QListData::shared_null); }
+        : d(other.d) { other.d = const_cast<QListData::Data *>(QListData::sharedNull()); }
     inline QList &operator=(QList<T> &&other) Q_DECL_NOTHROW
     { QList moved(std::move(other)); swap(moved); return *this; }
 #endif
     inline void swap(QList<T> &other) Q_DECL_NOTHROW { qSwap(d, other.d); }
 #ifdef Q_COMPILER_INITIALIZER_LISTS
     inline QList(std::initializer_list<T> args)
-        : d(const_cast<QListData::Data *>(&QListData::shared_null))
+        : d(const_cast<QListData::Data *>(QListData::sharedNull()))
     { reserve(int(args.size())); std::copy(args.begin(), args.end(), std::back_inserter(*this)); }
 #endif
     bool operator==(const QList<T> &l) const;
@@ -174,7 +174,7 @@ public:
     inline void detachShared()
     {
         // The "this->" qualification is needed for GCCE.
-        if (d->ref.isShared() && this->d != &QListData::shared_null)
+        if (d->ref.isShared() && this->d != QListData::sharedNull())
             detach_helper();
     }
 
@@ -186,7 +186,7 @@ public:
             return;
         if (!sharable)
             detach();
-        if (d != &QListData::shared_null)
+        if (d != QListData::sharedNull())
             d->ref.setSharable(sharable);
     }
 #endif
@@ -939,7 +939,7 @@ template <typename T>
 Q_OUTOFLINE_TEMPLATE QList<T> &QList<T>::operator+=(const QList<T> &l)
 {
     if (!l.isEmpty()) {
-        if (d == &QListData::shared_null) {
+        if (d == QListData::sharedNull()) {
             *this = l;
         } else {
             Node *n = (d->ref.isShared())
