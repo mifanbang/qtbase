@@ -29,7 +29,8 @@ qtConfig(vulkan): \
     qvkgen_h.variable_out = HEADERS
 else: \
     qvkgen_h.CONFIG += target_predeps no_link
-QMAKE_EXTRA_COMPILERS += qvkgen_h
+qtConfig(vulkan): \
+    QMAKE_EXTRA_COMPILERS += qvkgen_h
 
 qvkgen_ph.commands = $$escape_expand(\\n)
 qvkgen_ph.output = $$OUT_PWD/vulkan/qvulkanfunctions_p.h
@@ -39,7 +40,8 @@ qtConfig(vulkan): \
     qvkgen_ph.variable_out = HEADERS
 else: \
     qvkgen_ph.CONFIG += target_predeps no_link
-QMAKE_EXTRA_COMPILERS += qvkgen_ph
+qtConfig(vulkan): \
+    QMAKE_EXTRA_COMPILERS += qvkgen_ph
 
 qvkgen_pimpl.commands = $$escape_expand(\\n)
 qvkgen_pimpl.output = $$OUT_PWD/vulkan/qvulkanfunctions_p.cpp
@@ -49,7 +51,8 @@ qtConfig(vulkan): \
     qvkgen_pimpl.variable_out = SOURCES
 else: \
     qvkgen_pimpl.CONFIG += target_predeps no_link
-QMAKE_EXTRA_COMPILERS += qvkgen_pimpl
+qtConfig(vulkan): \
+    QMAKE_EXTRA_COMPILERS += qvkgen_pimpl
 
 # Ensure qvulkanfunctions.h gets installed correctly
 targ_headers.CONFIG += no_check_exist
